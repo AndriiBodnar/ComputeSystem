@@ -1,0 +1,57 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+using System.Globalization;
+using System.Threading;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            double H = 0;//entropy
+
+            string path = @"F:\Study\3\สั\Kolobok.txt.gz";
+            //string path = @"F:\Study\3\สั\Slova.txt.gz";
+            //string path = @"F:\Study\3\สั\GeForce10.txt.gz";
+
+            string text = "";
+            double len = 0.0;
+            Console.OutputEncoding = Encoding.UTF8;
+            using (StreamReader sr = new StreamReader(path, Encoding.UTF8))
+            {
+                text = sr.ReadToEnd();
+                sr.Close();
+            }
+            //Console.WriteLine(text);
+            len = text.Length;
+            Dictionary<char, int> pair = new Dictionary<char, int>();
+
+            
+             foreach (char c in text)
+             {
+                 if (pair.ContainsKey(c))
+                     pair[c] += 1;
+                 else
+                 {
+                     pair.Add(c, 1);
+
+                 }
+             }
+        
+            foreach (var item in pair)
+            {
+                H -= (item.Value / len) * Math.Log(item.Value / len, 2);
+               // Console.WriteLine("Symbol: " + item.Key + " Frequency: " + item.Value + " Probability: " + item.Value / len + " \n");
+            }
+            Console.WriteLine("Entropy bit: " + H + "\n" + "Info quantity byte: " + H * len / 8);
+            FileInfo file = new FileInfo(path);
+            Console.WriteLine("File name:  " + file.Name + " File size byte: " + file.Length);
+            
+        }
+    }
+}
