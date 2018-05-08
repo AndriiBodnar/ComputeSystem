@@ -1,0 +1,59 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp2
+
+{
+    class Program
+    {
+        private const long RIGHT_HALF_MASK = 0xFFFFFFFF;
+
+        static void Main(string[] args)
+        {
+           
+            Console.WriteLine("DIVISION RESULT: {0}",
+            Divide(Int32.Parse(Console.ReadLine()), Int32.Parse(Console.ReadLine())));
+            Console.ReadKey();
+         
+        }
+        static Int64 Divide(Int32 dividend, Int32 divisor)
+        {
+            bool isDividendNegative = dividend < 0;
+            bool isDivisorNegative = divisor < 0;
+
+            if (isDividendNegative)
+                dividend = ~dividend + 1;
+
+            if (isDivisorNegative)
+                divisor = ~divisor + 1;
+
+            Int32 quotient = 0;
+            Int64 remainder = dividend;
+
+            for (int i = 0; i < 32; i++)
+            {
+                remainder <<= 1;
+                remainder = (remainder & RIGHT_HALF_MASK) | (((remainder >> 32) - divisor) << 32);
+
+                if (remainder < 0)
+                {
+                    remainder = (remainder & RIGHT_HALF_MASK) | (((remainder >> 32) + divisor) << 32);
+                    quotient <<= 1;
+                }
+                else
+                {
+                    quotient <<= 1;
+                    quotient |= 1;
+                }
+
+                Console.WriteLine("Remainder: {0,-64} Quotient: {1,-32} Divisor: {2,-32}",
+                        Convert.ToString(remainder, 2), Convert.ToString(quotient, 2), Convert.ToString(divisor, 2));
+            }
+
+            return isDividendNegative ^ isDivisorNegative ? ~quotient + 1 : quotient;
+        }
+    }
+}
